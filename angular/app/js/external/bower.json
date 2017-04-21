@@ -1,0 +1,23 @@
+{
+  "name": "external",
+  "homepage": "https://github.com/MazinZ/media-share",
+  "authors": [
+    "Mazin Zakaria <mazinzakaria1@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.6.4",
+    "bootstrap": "^3.3.7",
+    "angular-ui-router": "ui-router#^0.4.2"
+  }
+}
