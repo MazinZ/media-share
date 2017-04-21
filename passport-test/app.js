@@ -11,15 +11,18 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
+var morgan = require('morgan');
 
 mongoose.connect('mongodb://localhost/passporttest');
 var db = mongoose.connection;
-
 
 var users = require('./routes/users');
 
 // Init App
 var app = express();
+
+// Logger 
+app.use(morgan('tiny'));
 
 // BodyParser Middleware
 app.use(bodyParser.json());
