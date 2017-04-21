@@ -65,7 +65,6 @@ passport.use(new LocalStrategy(
     User.getUserByUsername(username, function(err, user){
         if(err) throw err;
         if(!user){
-            // console.log("Unknown User");
             return done(null, false, {message: 'Unknown User'});
         }
         User.comparePassword(password, user.password, function(err, isMatch){
@@ -74,7 +73,6 @@ passport.use(new LocalStrategy(
                 console.log("Success");
                 return done(null, user);
             } else {
-                // console.log("Invalid password");
                 return done(null, false, {message: 'Invalid password'});
             }
         });
@@ -93,12 +91,22 @@ passport.deserializeUser(function(id, done) {
     });
 });
 
-router.post('/login', passport.authenticate('local'), function(req, res) {
-    // console.log(req);
-    console.log(req.authInfo);
-    res.send("Logged in");
-    // res.redirect('/');
-  });
+router.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        console.log(info);
+        if (err) { 
+            // return next(err); 
+            res.send("Error occured");
+        }
+        if (!user) { 
+            return res.send(info.message) 
+        }
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            return res.send("Logged in");
+        });
+    })(req, res, next);
+});
 
 router.get('/logout', function(req, res){
     req.logout();
