@@ -8,14 +8,13 @@ var User = require('../models/user');
 // Register
 router.get('/register', function(req, res){
     // Render register screen
-	// res.render('register');
-    res.render('content');
+    res.end();
 });
 
 // Login
 router.get('/login', function(req, res){
     // Render login screen
-	// res.render('login');
+    res.end();
 });
 
 // Register User

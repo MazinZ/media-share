@@ -64,6 +64,11 @@ app.use(expressValidator({
 
 app.use('/users', users);
 
+//Used for angular
+app.get('*', function(req, res) {
+      res.sendfile('./views/content.html'); // load the single view file (angular will handle the page changes on the front-end)
+  });
+
 // Set Port
 app.set('port', (process.env.PORT || 8080));
 
