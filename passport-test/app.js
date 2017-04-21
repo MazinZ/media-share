@@ -29,6 +29,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Set views folder
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+
 // // Express Session
 // app.use(session({
 //     secret: 'secret',

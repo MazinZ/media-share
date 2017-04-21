@@ -9,6 +9,7 @@ var User = require('../models/user');
 router.get('/register', function(req, res){
     // Render register screen
 	// res.render('register');
+    res.render('content');
 });
 
 // Login
@@ -59,12 +60,12 @@ router.post('/register', function(req, res){
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    console.log("Authenticating");
-    console.log(username);
+    // console.log("Authenticating");
+    // console.log(username);
     User.getUserByUsername(username, function(err, user){
         if(err) throw err;
         if(!user){
-            console.log("Unknown User");
+            // console.log("Unknown User");
             return done(null, false, {message: 'Unknown User'});
         }
         User.comparePassword(password, user.password, function(err, isMatch){
@@ -73,7 +74,7 @@ passport.use(new LocalStrategy(
                 console.log("Success");
                 return done(null, user);
             } else {
-                console.log("Invalid password");
+                // console.log("Invalid password");
                 return done(null, false, {message: 'Invalid password'});
             }
         });
@@ -81,17 +82,20 @@ passport.use(new LocalStrategy(
   }));
 
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+    console.log("Serializing");
+    done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  User.getUserById(id, function(err, user) {
-    done(err, user);
-  });
+    console.log("Deserializing");
+    User.getUserById(id, function(err, user) {
+        done(err, user);
+    });
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
     // console.log(req);
+    console.log(req.authInfo);
     res.send("Logged in");
     // res.redirect('/');
   });
