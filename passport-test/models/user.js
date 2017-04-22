@@ -34,6 +34,18 @@ module.exports.getUserByUsername = function(username, callback){
 	User.findOne(query, callback);
 }
 
+module.exports.updateUser = function(username, updateParams, callback){
+	var query = {username: username};
+	console.log("Updating user: " + username);
+	console.log(updateParams);
+	var newUser = {};
+	if(updateParams.name) newUser.name = updateParams.name;
+	if(updateParams.email) newUser.email = updateParams.email;
+	console.log(newUser);
+	User.findOneAndUpdate(query, newUser, callback);
+	
+}
+
 module.exports.getUserById = function(id, callback){
 	User.findById(id, callback);
 }
