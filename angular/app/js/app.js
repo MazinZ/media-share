@@ -1,7 +1,7 @@
 var app_name = "media-share";
 
 angular.module(app_name, 
-['ui.router', 'ui-notification', 'angular-loading-bar', 'ngAnimate']);
+['ui.router', 'ui-notification', 'angular-loading-bar', 'ngAnimate', 'ngCookies']);
 
 angular.module('notification', ['ui-notification'])
   .config(function(NotificationProvider) {

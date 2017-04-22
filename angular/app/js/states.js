@@ -35,4 +35,13 @@ angular.module(app_name)
         }
       }
     })
+    .state('sign_out', {
+      url: '/logout',
+      views: {
+        'content@': {
+        template: ' ',
+        controller: 'SignOutController'
+        }
+      }
+    })
 }]);
