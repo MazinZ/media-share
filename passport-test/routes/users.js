@@ -17,10 +17,9 @@ var User = require('../models/user');
 //     res.end();
 // });
 
-
+// Needs to be above /:username
 router.get('/me', function(req, res){
     if(req.isAuthenticated()){
-        console.log(req);
         res.send(req.user.username);
     } else {
         console.log(req);
