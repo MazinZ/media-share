@@ -44,4 +44,13 @@ angular.module(app_name)
         }
       }
     })
+    .state('profile', {
+      url: '/user/:username',
+      views: {
+        'content@': {
+        templateUrl: '/templates/users/profile.html',
+        controller: 'ProfileController'
+        }
+      }
+    })
 }]);

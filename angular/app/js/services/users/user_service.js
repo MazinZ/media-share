@@ -10,8 +10,10 @@ angular.module(app_name).service('user_service',
         data: user
       })
       .then(function(data){
-        $rootScope.$broadcast("USER_LOGGED_IN");
-        $location.url('/');
+        $timeout(function(){
+          $rootScope.$broadcast("USER_LOGGED_IN", data);
+        });
+        $location.url('/user/' + data.data);
         $cookies.put('ms_cookie', JSON.stringify(new Date()));
       });
     };
@@ -19,7 +21,7 @@ angular.module(app_name).service('user_service',
     self.sign_out = function(){
       $http({
         method: 'GET',
-        url: '/users/logout/'
+        url: '/api/users/logout/'
       })
       .then(function(data){
         clear_user();
@@ -85,17 +87,16 @@ angular.module(app_name).service('user_service',
     }
 
     function get_user_by_username(username) {
-        return $q(function(resolve, reject) {
-            $http({
-                method: 'GET',
-                url: '/api/users/' + username + '/',
-            }).then(function(data){
-                resolve(data.data);
-            }, function(error){
-                reject(error);
-            });
-        
+      return $q(function(resolve, reject) {
+        $http({
+          method: 'GET',
+          url: '/api/users/' + username + '/',
+        }).then(function(data){
+          resolve(data.data);
+        }, function(error){
+          reject(error);
         });
+      });
     }
 
     self.get_user_by_username = get_user_by_username;
