@@ -1,58 +1,54 @@
-angular.module(app_name).service('user_service', ['$http', '$location', '$rootScope', '$q', '$window', '$timeout',
-    function($http, $location, $rootScope, $q, $window, $timeout){
+angular.module(app_name).service('user_service', 
+['$http', '$location', '$rootScope', '$q', '$window', '$timeout', '$cookies',
+    function($http, $location, $rootScope, $q, $window, $timeout, $cookies){
     var self = this;
 
     self.sign_in = function(user){
-        $http({
-            method: 'POST',
-            url: '/api/users/login/',
-            data: user
-        })
-        .then(function(data){
-            $rootScope.$broadcast("USER_LOGGED_IN");
-            console.log(data);
-            //set_user(data.data.auth_token);
-            $location.url('/');
-        });
+      $http({
+        method: 'POST',
+        url: '/api/users/login/',
+        data: user
+      })
+      .then(function(data){
+        $rootScope.$broadcast("USER_LOGGED_IN");
+        $location.url('/');
+        $cookies.put('ms_cookie', JSON.stringify(new Date()));
+      });
     };
 
     self.sign_out = function(){
-        $http({
-            method: 'POST',
-            url: '/api/users/logout/'
-        })
-        .then(function(data){
-            clear_user();
-        });
+      $http({
+        method: 'GET',
+        url: '/users/logout/'
+      })
+      .then(function(data){
+        clear_user();
+      });
     };
 
     self.sign_up = function(user){
-        $http({
-            method: 'POST',
-            url: '/api/users/register/',
-            data: user
-        })
-        .then(function(data){
-            self.sign_in();
-        },function(data){
+      $http({
+        method: 'POST',
+        url: '/api/users/register/',
+        data: user
+      })
+      .then(function(data){
+        self.sign_in();
+      },function(data){
             // handle error
-        });
+      });
     };
 
     function is_signed_in() {
-        return !!$window.localStorage.token;
+      return !!$cookies.get('ms_cookie');
     }
 
     function set_user(token) {
-        $window.localStorage.token = token;
-        get_current_user().then(function(data){
-            $rootScope.$broadcast("USER_SET", data);
-        });
+      $window.localStorage.username = token;
     }
 
     function clear_user(){
-      $window.localStorage.removeItem('token');
-      $window.localStorage.removeItem('username');        
+      $cookies.remove('ms_cookie');
       $location.url('/');
       $rootScope.$broadcast("USER_CLEARED");
     }
@@ -76,21 +72,15 @@ angular.module(app_name).service('user_service', ['$http', '$location', '$rootSc
     }
 
     function get_current_user() {
-        return $q(function(resolve, reject) {
-
-        if (is_signed_in()) {
-
-            $http({
-                method: 'GET',
-                url: '/api/users/me/',
-            }).then(function(data){
-                resolve(data.data);
-            }, function(error){
-                reject(error);
-            });
-
-        }
-        else return;
+      $http({
+          method: 'GET',
+          url: '/api/users/me/',
+        }).then(function(data){
+          console.log(data);
+          return data;
+        }, function(error){
+          console.log(error);
+          return null;
         });
     }
 
