@@ -18,15 +18,8 @@ var User = require('../models/user');
 // });
 
 // Needs to be above /:username
-router.get('/me', function(req, res){
-    if(req.isAuthenticated()){
-        res.send(req.user.username);
-    } else {
-        console.log(req);
-        //req.flash('error_msg','You are not logged in');
-        res.status(401);
-        res.send("Not logged in");
-    }
+router.get('/me', ensureAuthenticated, function(req, res){
+    res.send(req.user.username);
 });
 
 router.get('/:username', function(req, res){
@@ -37,8 +30,8 @@ router.get('/:username', function(req, res){
             res.send('Unknown User');
         } else {
             response = {
-                "name" : user.name,
-                "username" : user.username
+                name : user.name,
+                username : user.username
             }
             res.send(response);
         }
@@ -93,6 +86,19 @@ router.post('/register', function(req, res){
         res.send("Succes created user: " + newUser.name);
 	}
 });
+
+router.put('/:username', ensureAuthenticated, function(req, res){
+    User.updateUser(req.user.username, req.body, function(err, user){
+		if(err) throw err;
+		if(!user){
+            res.status(400);
+			res.send('Unknown User');
+		} else {
+			res.sendStatus(200);
+		}
+	});
+});
+
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
@@ -154,5 +160,15 @@ router.get('/logout', function(req, res){
 
 	// res.redirect('/users/login');
 });
+
+function ensureAuthenticated(req, res, next){
+	if(req.isAuthenticated()){
+		return next();
+	} else {
+		//req.flash('error_msg','You are not logged in');
+        res.status(401);
+		res.send('Not logged in');
+	}
+}
 
 module.exports = router;
