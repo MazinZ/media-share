@@ -31,8 +31,6 @@ router.get('/logout', function(req, res){
 	// res.redirect('/users/login');
 });
 
-
-
 router.get('/isloggedin', function(req, res){
     if(req.isAuthenticated()){
         res.send("Yes")
@@ -81,9 +79,6 @@ router.post('/register', function(req, res){
         res.send("Succes created user: " + newUser.name);
 	}
 });
-
-
-
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
@@ -134,7 +129,7 @@ router.post('/login', function(req, res, next) {
         }
         req.logIn(user, function(err) {
             if (err) { return next(err); }
-            return res.send("Logged in");
+            return res.send(user.username);
         });
     })(req, res, next);
 });
