@@ -33,16 +33,16 @@ app.use(cookieParser());
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
-// // Express Session
-// app.use(session({
-//     secret: 'secret',
-//     saveUninitialized: true,
-//     resave: true
-// }));
+// Express Session
+app.use(session({
+    secret: 'secret',
+    saveUninitialized: true,
+    resave: true
+}));
 
 // Passport init
 app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.session());
 
 // Express Validator
 app.use(expressValidator({
@@ -62,7 +62,7 @@ app.use(expressValidator({
   }
 }));
 
-app.use('/users', users);
+app.use('/api/users', users);
 
 //Used for angular
 app.get('*', function(req, res) {

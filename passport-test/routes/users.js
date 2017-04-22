@@ -5,17 +5,17 @@ var LocalStrategy = require('passport-local').Strategy;
 
 var User = require('../models/user');
 
-// Register
-router.get('/register', function(req, res){
-    // Render register screen
-    res.end();
-});
+// // Register
+// router.get('/register', function(req, res){
+//     // Render register screen
+//     res.end();
+// });
 
-// Login
-router.get('/login', function(req, res){
-    // Render login screen
-    res.end();
-});
+// // Login
+// router.get('/login', function(req, res){
+//     // Render login screen
+//     res.end();
+// });
 
 // Register User
 router.post('/register', function(req, res){
