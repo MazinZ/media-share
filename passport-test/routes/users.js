@@ -17,6 +17,35 @@ var User = require('../models/user');
 //     res.end();
 // });
 
+
+router.get('/me', function(req, res){
+    if(req.isAuthenticated()){
+        console.log(req);
+        res.send(req.user.username);
+    } else {
+        console.log(req);
+        //req.flash('error_msg','You are not logged in');
+        res.status(401);
+        res.send("Not logged in");
+    }
+});
+
+router.get('/:username', function(req, res){
+    User.getUserByUsername(req.params.username, function(err, user){
+        if(err) throw err;
+        if(!user){
+            res.status(404);
+            res.send('Unknown User');
+        } else {
+            response = {
+                "name" : user.name,
+                "username" : user.username
+            }
+            res.send(response);
+        }
+    });
+});
+
 router.get('/isloggedin', function(req, res){
     if(req.isAuthenticated()){
         res.send("Yes")
@@ -104,7 +133,7 @@ router.post('/login', function(req, res, next) {
         console.log(info);
         if (err) { 
             // return next(err); 
-            res.status(401);
+            res.status(500);
             res.send("Error occured");
         }
         if (!user) { 
