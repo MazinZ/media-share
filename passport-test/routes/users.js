@@ -17,6 +17,15 @@ var User = require('../models/user');
 //     res.end();
 // });
 
+router.get('/isloggedin', function(req, res){
+    if(req.isAuthenticated()){
+        res.send("Yes")
+	} else {
+		//req.flash('error_msg','You are not logged in');
+		res.send("No");
+	}
+})
+
 // Register User
 router.post('/register', function(req, res){
 	var name = req.body.name;
@@ -95,9 +104,11 @@ router.post('/login', function(req, res, next) {
         console.log(info);
         if (err) { 
             // return next(err); 
+            res.status(401);
             res.send("Error occured");
         }
         if (!user) { 
+            res.status(401);
             return res.send(info.message) 
         }
         req.logIn(user, function(err) {
