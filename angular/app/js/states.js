@@ -26,4 +26,13 @@ angular.module(app_name)
         }
       }
     })
+    .state('sign_up', {
+      url: '/register',
+      views: {
+        'content@': {
+        templateUrl: '/templates/users/sign_up.html',
+        controller: 'SignUpController'
+        }
+      }
+    })
 }]);
