@@ -3,14 +3,22 @@
 <html ng-app="media-share">
 
 <head>
-  <title>Home</title>
-      <base href="/" />
+<title>Home</title>
+<base href="/" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" type="text/css" href="/js/external/bower_components/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
-      <div class="container">
-        <div ui-view="content"></div>
-      </div>
-  <script type="text/javascript" src="app/js/external/bower_components/angular-ui-router/release/angular-ui-router.min.js"> </script>
+  <div class="container">
+    <div ui-view="content">
+    </div>
+  </div>
+  <script src="/js/external/bower_components/angular/angular.js"></script>
+  <script src="/js/external/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="/js/external/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="/js/external/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="/dist/all.js"></script>
+
 </body>
 </html>

@@ -1,5 +1,5 @@
-angular.module(app_name).service('user_service', ['$http', '$location', '$cookies', '$rootScope', '$q', '$window', '$timeout',
-    function($http, $location, $cookies, $rootScope, $q, $window, $timeout){
+angular.module(app_name).service('user_service', ['$http', '$location', '$rootScope', '$q', '$window', '$timeout',
+    function($http, $location, $rootScope, $q, $window, $timeout){
     var self = this;
 
     self.sign_in = function(user){
