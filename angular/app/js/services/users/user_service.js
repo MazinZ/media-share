@@ -5,12 +5,13 @@ angular.module(app_name).service('user_service', ['$http', '$location', '$rootSc
     self.sign_in = function(user){
         $http({
             method: 'POST',
-            url: '/api/v1/auth/login/',
+            url: '/api/users/login/',
             data: user
         })
         .then(function(data){
             $rootScope.$broadcast("USER_LOGGED_IN");
-            set_user(data.data.auth_token);
+            console.log(data);
+            //set_user(data.data.auth_token);
             $location.url('/');
         });
     };
@@ -18,7 +19,7 @@ angular.module(app_name).service('user_service', ['$http', '$location', '$rootSc
     self.sign_out = function(){
         $http({
             method: 'POST',
-            url: '/api/v1/auth/logout/'
+            url: '/api/users/logout/'
         })
         .then(function(data){
             clear_user();
@@ -28,7 +29,7 @@ angular.module(app_name).service('user_service', ['$http', '$location', '$rootSc
     self.sign_up = function(user){
         $http({
             method: 'POST',
-            url: '/api/v1/auth/register/',
+            url: '/api/users/register/',
             data: user
         })
         .then(function(data){
@@ -63,7 +64,7 @@ angular.module(app_name).service('user_service', ['$http', '$location', '$rootSc
         if (is_signed_in()) {
             $http({
                 method: 'GET',
-                url: '/api/v1/accounts/' + username + '/',
+                url: '/api/users/' + username + '/',
             }).then(function(data){
                 resolve(data.data);
             }, function(error){
@@ -81,7 +82,7 @@ angular.module(app_name).service('user_service', ['$http', '$location', '$rootSc
 
             $http({
                 method: 'GET',
-                url: '/api/v1/auth/me/',
+                url: '/api/users/me/',
             }).then(function(data){
                 resolve(data.data);
             }, function(error){
@@ -97,7 +98,7 @@ angular.module(app_name).service('user_service', ['$http', '$location', '$rootSc
         return $q(function(resolve, reject) {
             $http({
                 method: 'GET',
-                url: '/api/v1/accounts/' + username + '/',
+                url: '/api/users/' + username + '/',
             }).then(function(data){
                 resolve(data.data);
             }, function(error){
