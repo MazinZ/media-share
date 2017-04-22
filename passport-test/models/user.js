@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
+var q = require('q');
 
 // User Schema
 var UserSchema = mongoose.Schema({
@@ -41,8 +42,21 @@ module.exports.updateUser = function(username, updateParams, callback){
 	var newUser = {};
 	if(updateParams.name) newUser.name = updateParams.name;
 	if(updateParams.email) newUser.email = updateParams.email;
-	console.log(newUser);
-	User.findOneAndUpdate(query, newUser, callback);
+	if(updateParams.password){
+		genPasswordHash(updateParams.password)
+		.then(function(hash){
+			newUser.password = hash;
+			console.log("updating password");
+			console.log(newUser);
+			User.findOneAndUpdate(query, newUser, callback);
+		});
+	} else {
+		console.log("NOT updating password");
+		console.log(newUser);
+		User.findOneAndUpdate(query, newUser, callback);
+	}
+
+
 	
 }
 
@@ -55,4 +69,14 @@ module.exports.comparePassword = function(candidatePassword, hash, callback){
     	if(err) throw err;
     	callback(null, isMatch);
 	});
+}
+
+function genPasswordHash(password){
+	var deferred = q.defer();
+	bcrypt.genSalt(10, function(err, salt) {
+	    bcrypt.hash(password, salt, function(err, hash) {
+	        deferred.resolve(hash);
+	    });
+	});
+	return deferred.promise;
 }

@@ -22,21 +22,16 @@ router.get('/me', ensureAuthenticated, function(req, res){
     res.send(req.user.username);
 });
 
-router.get('/:username', function(req, res){
-    User.getUserByUsername(req.params.username, function(err, user){
-        if(err) throw err;
-        if(!user){
-            res.status(404);
-            res.send('Unknown User');
-        } else {
-            response = {
-                name : user.name,
-                username : user.username
-            }
-            res.send(response);
-        }
-    });
+router.get('/logout', function(req, res){
+    req.logout();
+
+    res.send("Logged out");
+	// req.flash('success_msg', 'You are logged out');
+
+	// res.redirect('/users/login');
 });
+
+
 
 router.get('/isloggedin', function(req, res){
     if(req.isAuthenticated()){
@@ -87,17 +82,7 @@ router.post('/register', function(req, res){
 	}
 });
 
-router.put('/:username', ensureAuthenticated, function(req, res){
-    User.updateUser(req.user.username, req.body, function(err, user){
-		if(err) throw err;
-		if(!user){
-            res.status(400);
-			res.send('Unknown User');
-		} else {
-			res.sendStatus(200);
-		}
-	});
-});
+
 
 
 passport.use(new LocalStrategy(
@@ -128,7 +113,9 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
     console.log("Deserializing");
+    console.log(id);
     User.getUserById(id, function(err, user) {
+        console.log(user);
         done(err, user);
     });
 });
@@ -152,13 +139,32 @@ router.post('/login', function(req, res, next) {
     })(req, res, next);
 });
 
-router.get('/logout', function(req, res){
-    req.logout();
+router.get('/:username', function(req, res){
+    User.getUserByUsername(req.params.username, function(err, user){
+        if(err) throw err;
+        if(!user){
+            res.status(404);
+            res.send('Unknown User');
+        } else {
+            response = {
+                name : user.name,
+                username : user.username
+            }
+            res.send(response);
+        }
+    });
+});
 
-    res.send("Logged out");
-	// req.flash('success_msg', 'You are logged out');
-
-	// res.redirect('/users/login');
+router.put('/:username', ensureAuthenticated, function(req, res){
+    User.updateUser(req.user.username, req.body, function(err, user){
+		if(err) throw err;
+		if(!user){
+            res.status(400);
+			res.send('Unknown User');
+		} else {
+			res.sendStatus(200);
+		}
+	});
 });
 
 function ensureAuthenticated(req, res, next){

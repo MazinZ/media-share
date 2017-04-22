@@ -24,6 +24,7 @@
     "morgan": "^1.8.1",
     "passport": "*",
     "passport-http": "*",
-    "passport-local": "*"
+    "passport-local": "*",
+    "q": "^1.5.0"
   }
 }
