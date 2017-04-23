@@ -37,8 +37,6 @@ module.exports.getChannelModerators = function(channelName, callback){
             channel.populate("moderators", function(err, channel){
                 if(err) console.log(err);
                 else {
-                    console.log("2");
-                    console.log(channel);
                     var moderators = channel.moderators;
                     callback(err, moderators);
                 }

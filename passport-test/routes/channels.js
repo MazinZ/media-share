@@ -1,11 +1,120 @@
 var express = require('express');
 var router = express.Router();
 var cheese = require('cheese-name');
-// var passport = require('passport');
+var passport = require('passport');
 // var LocalStrategy = require('passport-local').Strategy;
+passport.serializeUser(function(user, done) {
+    console.log("Serializing");
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    console.log("Deserializing");
+    console.log(id);
+    User.getUserById(id, function(err, user) {
+        console.log(user);
+        done(err, user);
+    });
+});
 
 var User = require('../models/user');
 var Channel = require('../models/channel');
+
+router.get('/isloggedin', function(req, res){
+    if(req.isAuthenticated()){
+        res.send("Yes")
+	} else {
+		//req.flash('error_msg','You are not logged in');
+		res.send("No");
+	}
+})
+
+router.post('/:channelName/play', function(req, res){
+    var channelName = req.params.channelName;
+    if(req.isAuthenticated()){
+        Channel.getChannelModerators(channelName, function(err, moderators){
+            if(err){
+                console.log(err);
+            }
+            if(!moderators){
+                return res.send(400);
+            } else {
+                modNames = []
+                moderators.forEach(function(mod) {
+                    modNames.push(mod.username);
+                }, this);
+                if(modNames.includes(req.user.username)){
+                    res.send("PLAY CHANNEL");
+                } else {
+                    res.send("NOT A MODERATOR");
+                }
+            }
+            
+        })
+        // res.send("Yes")
+	} else {
+		//req.flash('error_msg','You are not logged in');
+		res.send("Not logged in.");
+	}
+});
+
+router.post('/:channelName/pause', function(req, res){
+    var channelName = req.params.channelName;
+    if(req.isAuthenticated()){
+        Channel.getChannelModerators(channelName, function(err, moderators){
+            if(err){
+                console.log(err);
+            }
+            if(!moderators){
+                return res.send(400);
+            } else {
+                modNames = []
+                moderators.forEach(function(mod) {
+                    modNames.push(mod.username);
+                }, this);
+                if(modNames.includes(req.user.username)){
+                    res.send("PAUSE CHANNEL");
+                } else {
+                    res.send("NOT A MODERATOR");
+                }
+            }
+            
+        })
+        // res.send("Yes")
+	} else {
+		//req.flash('error_msg','You are not logged in');
+		res.send("Not logged in.");
+	}
+});
+
+router.post('/:channelName/skip', function(req, res){
+    var channelName = req.params.channelName;
+    if(req.isAuthenticated()){
+        Channel.getChannelModerators(channelName, function(err, moderators){
+            if(err){
+                console.log(err);
+            }
+            if(!moderators){
+                return res.send(400);
+            } else {
+                modNames = []
+                moderators.forEach(function(mod) {
+                    modNames.push(mod.username);
+                }, this);
+                if(modNames.includes(req.user.username)){
+                    res.send("SKIP CHANNEL");
+                } else {
+                    res.send("NOT A MODERATOR");
+                }
+            }
+            
+        })
+        // res.send("Yes")
+	} else {
+		//req.flash('error_msg','You are not logged in');
+		res.send("Not logged in.");
+	}
+});
 
 // Create a new channel
 router.post('/', function(req, res){

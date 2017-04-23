@@ -82,8 +82,6 @@ router.post('/register', function(req, res){
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    // console.log("Authenticating");
-    // console.log(username);
     User.getUserByUsername(username, function(err, user){
         if(err) throw err;
         if(!user){
