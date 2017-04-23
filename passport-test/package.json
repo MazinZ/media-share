@@ -11,6 +11,7 @@
   "dependencies": {
     "bcryptjs": "*",
     "body-parser": "*",
+    "cheese-name": "^1.0.0",
     "connect-flash": "*",
     "cookie-parser": "^1.4.1",
     "ejs": "^2.5.6",

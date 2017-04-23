@@ -17,6 +17,7 @@ mongoose.connect('mongodb://localhost/passporttest');
 var db = mongoose.connection;
 
 var users = require('./routes/users');
+var channels = require('./routes/channels');
 
 // Init App
 var app = express();
@@ -63,6 +64,7 @@ app.use(expressValidator({
 }));
 
 app.use('/api/users', users);
+app.use('/api/channels', channels);
 
 //Used for angular
 app.get('*', function(req, res) {

@@ -54,10 +54,7 @@ module.exports.updateUser = function(username, updateParams, callback){
 		console.log("NOT updating password");
 		console.log(newUser);
 		User.findOneAndUpdate(query, newUser, callback);
-	}
-
-
-	
+	}	
 }
 
 module.exports.getUserById = function(id, callback){
