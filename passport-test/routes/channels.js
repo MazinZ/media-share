@@ -119,6 +119,7 @@ router.post('/:channelName/skip', function(req, res){
 // Create a new channel
 router.post('/', function(req, res){
 	var newChannelName = cheese();
+    // Replaces whitespace with dashes
     newChannelName = newChannelName.replace(/\s/g , "-");
     console.log("newCheese: " + newChannelName);
 
@@ -134,7 +135,7 @@ router.post('/', function(req, res){
             res.send(err.errmsg);
         } else {
             console.log(channel);
-            res.send("Success created channel: " + channel.channelName);
+            res.send({channelName: channel.channelName});
         }
     });	
 });
