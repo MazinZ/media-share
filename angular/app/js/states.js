@@ -53,4 +53,13 @@ angular.module(app_name)
         }
       }
     })
+    .state('channel', {
+      url: '/channel/:name',
+      views: {
+        'content@': {
+        templateUrl: '/templates/channels/channel.html',
+        controller: 'ChannelController'
+        }
+      }
+    })
 }]);
