@@ -1,6 +1,6 @@
 var app_name = "media-share";
 
-angular.module(app_name, 
+var app = angular.module(app_name, 
 ['ui.router', 'ui-notification', 'angular-loading-bar', 'ngAnimate', 'ngCookies']);
 
 angular.module('notification', ['ui-notification'])

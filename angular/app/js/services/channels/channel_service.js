@@ -12,6 +12,11 @@ angular.module(app_name).service('channel_service', ['$http', '$location', '$q',
       });
     };
 
-    
+    self.get_channel = function(name) {
+      return $http({
+        method: 'GET',
+        url: '/api/channels/' + name,
+      });
+    };
 
 }]);

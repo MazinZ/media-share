@@ -3,6 +3,8 @@ angular.module(app_name).service('user_service',
     function($http, $location, $rootScope, $q, $window, $timeout, $cookies){
     var self = this;
 
+    self.user = null;
+  
     self.sign_in = function(user){
       $http({
         method: 'POST',
@@ -10,11 +12,8 @@ angular.module(app_name).service('user_service',
         data: user
       })
       .then(function(data){
-        $timeout(function(){
-          $rootScope.$broadcast("USER_LOGGED_IN", data);
-        });
+        set_user();
         $location.url('/user/' + data.data);
-        $cookies.put('ms_cookie', JSON.stringify(new Date()));
       });
     };
 
@@ -36,8 +35,6 @@ angular.module(app_name).service('user_service',
       })
       .then(function(data){
         self.sign_in();
-      },function(data){
-            // handle error
       });
     };
 
@@ -45,8 +42,12 @@ angular.module(app_name).service('user_service',
       return !!$cookies.get('ms_cookie');
     }
 
-    function set_user(token) {
-      $window.localStorage.username = token;
+    function set_user() {
+      $cookies.put('ms_cookie', JSON.stringify(new Date()));
+      get_current_user().then(function(data){
+        self.user = data.data;
+        $rootScope.$broadcast("USER_SET", data);
+      });
     }
 
     function clear_user(){
@@ -56,34 +57,28 @@ angular.module(app_name).service('user_service',
     }
 
     function get_user(username) {
-        return $q(function(resolve, reject) {
+      return $q(function(resolve, reject) {
 
-        var user_id = null;
-        if (is_signed_in()) {
-            $http({
-                method: 'GET',
-                url: '/api/users/' + username + '/',
-            }).then(function(data){
-                resolve(data.data);
-            }, function(error){
-                reject(error);
-            });
-        }
-        else return;
+      var user_id = null;
+      if (is_signed_in()) {
+        $http({
+            method: 'GET',
+            url: '/api/users/' + username + '/',
+        }).then(function(data){
+            resolve(data.data);
+        }, function(error){
+            reject(error);
         });
+      }
+      else return;
+      });
     }
 
     function get_current_user() {
-      $http({
-          method: 'GET',
-          url: '/api/users/me/',
-        }).then(function(data){
-          console.log(data);
-          return data;
-        }, function(error){
-          console.log(error);
-          return null;
-        });
+      return $http({
+        method: 'GET',
+        url: '/api/users/me/',
+      });
     }
 
     function get_user_by_username(username) {
@@ -101,5 +96,7 @@ angular.module(app_name).service('user_service',
 
     self.get_user_by_username = get_user_by_username;
     self.get_user = get_user;
+    self.get_current_user = get_current_user;
     self.is_signed_in = is_signed_in;
+    self.set_user = set_user;
 }]);
