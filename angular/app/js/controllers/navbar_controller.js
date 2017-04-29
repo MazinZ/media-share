@@ -10,7 +10,7 @@ angular.module(app_name).controller('NavbarController', ['$scope', '$rootScope',
   });
 
   $rootScope.$on('USER_CLEARED', function(event, user){
-    $scope.username = undefined;
+    $scope.username = null;
   });
 
   function init() {

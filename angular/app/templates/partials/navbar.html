@@ -16,15 +16,12 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
+        <li ng-if="!username" class="active"><a href="/login">Login</a></li>
         <li class="dropdown">
-          <li ng-if="!username" class="active"><a href="/login">Login</a></li>
-          <li class="dropdown">
-            <a ng-if="username" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{username}} <span class="caret"></span></a>
-          </li>
+          <a ng-if="username" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">{{username}} <b class="caret"></b></a>
           <ul ng-if="username" class="dropdown-menu">
             <li><a href="/user/{{username}}">Profile</a></li>
             <li><a href="#">Account</a></li>
-            <li><a href="#">Teams</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="/logout">Logout</a></li>
           </ul>

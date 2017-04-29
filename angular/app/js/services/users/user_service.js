@@ -50,9 +50,10 @@ angular.module(app_name).service('user_service',
       });
     }
 
-    function clear_user(){
+    function clear_user() {
       $cookies.remove('ms_cookie');
       $location.url('/');
+      self.user = null;
       $rootScope.$broadcast("USER_CLEARED");
     }
 
