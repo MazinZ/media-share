@@ -19,16 +19,18 @@ var User = require('../models/user');
 
 // Needs to be above /:username
 router.get('/me', ensureAuthenticated, function(req, res){
-    res.send(req.user.username);
+    var user = req.user;
+    var response_obj = {
+        username: user.username,
+        name: user.name,
+        email: user.email
+    }
+    res.json(response_obj);
 });
 
 router.get('/logout', function(req, res){
     req.logout();
-
     res.send("Logged out");
-	// req.flash('success_msg', 'You are logged out');
-
-	// res.redirect('/users/login');
 });
 
 router.get('/isloggedin', function(req, res){
@@ -59,6 +61,7 @@ router.post('/register', function(req, res){
 	var errors = req.validationErrors();
 
 	if(errors){
+        console.log("errors");
         res.send({errors: errors});
 	} else {
 		var newUser = new User({
@@ -69,13 +72,13 @@ router.post('/register', function(req, res){
 		});
 
 		User.createUser(newUser, function(err, user){
-			if(err) throw err;
+			if(err){
+                console.log(err);
+                res.send(500);
+            }
 			console.log(user);
 		});
 
-		// req.flash('success_msg', 'You are registered and can now login');
-
-		// res.redirect('/users/login');
         res.send("Succes created user: " + newUser.name);
 	}
 });

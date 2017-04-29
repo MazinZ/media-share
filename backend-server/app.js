@@ -24,8 +24,8 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server)
 
-io.on('connection', function(socket){
-  socket.on('room', function(room) {
+io.on('connection', function (socket) {
+  socket.on('room', function (room) {
     console.log('client joined room: ' + room);
     socket.join(room);
   });
