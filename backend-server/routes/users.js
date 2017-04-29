@@ -62,6 +62,7 @@ router.post('/register', function(req, res){
 
 	if(errors){
         console.log("errors");
+        res.status(400)
         res.send({errors: errors});
 	} else {
 		var newUser = new User({
@@ -73,13 +74,21 @@ router.post('/register', function(req, res){
 
 		User.createUser(newUser, function(err, user){
 			if(err){
-                console.log(err);
-                res.send(500);
+                if(err.code == 11000){
+                    res.status(400)
+                    res.send("Username or email already exists");
+                } else {
+                    res.sendStatus(500);
+                    res.send("Error occured");
+                }
             }
-			console.log(user);
+			else if(!user){
+                res.status(500);
+                res.send("Could not create user");
+            } else {
+                 res.send("Succes created user: " + newUser.username);
+            }
 		});
-
-        res.send("Succes created user: " + newUser.name);
 	}
 });
 
