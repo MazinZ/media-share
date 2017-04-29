@@ -1,0 +1,74 @@
+extends layout
+
+block content
+
+  #player
+  script.
+    // 2. This code loads the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api?controls=0";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    // 3. This function creates an <iframe> (and YouTube player)
+    //    after the API code downloads.
+    var player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '390',
+        width: '640',
+        videoId: 'bJeG-GGH114',
+        playerVars: {
+          controls: 0,
+          disablekb: 1,
+          frameborder: 0
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+    // 4. The API will call this function when the video player is ready.
+    function onPlayerReady(event) {
+      //- event.target.playVideo();
+      console.log('player ready');
+    }
+
+    // 5. The API calls this function when the player's state changes.
+    //    The function indicates when playing a video (state=1)
+    //- -1 (unstarted)
+    //- 0 (ended)
+    //- 1 (playing)
+    //- 2 (paused)
+    //- 3 (buffering)
+    //- 5 (video cued).
+    var done = false;
+    function onPlayerStateChange(event) {
+      console.log(event);
+      if(event.data == YT.PlayerState.CUED){
+        console.log('player cued event');
+      }
+    }
+
+    function stopVideo() {
+      player.stopVideo();
+    }
+  
+  script(src="/socket.io/socket.io.js")
+  script.
+    var socket = io('//localhost:8080');
+    socket.on('play', (data) => {
+      player.playVideo();
+    });
+    socket.on('pause', (data) => {
+      player.pauseVideo();
+    });
+    socket.on('getCurrentTime', (data) => {
+      console.log('getCurrentTime');
+      socket.emit('getCurrentTime', {duration: player.getCurrentTime()})
+    });
+    socket.on('setCurrentTime', (data) => {
+      console.log('setCurrentTime');
+      console.log(data);
+      player.seekTo(data.time, true);
+    });
