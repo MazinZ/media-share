@@ -11,12 +11,26 @@ angular.module(app_name)
       });
     };
 
-    $scope.sendSync = function() {
-      socket.emit('sync', {'room_name': $scope.channelName, 'timestamp': 30});
-    };
+    function sendSync() {
+      socket.emit('sync', {
+        'room_name': $scope.channelName,
+        'timestamp': $scope.getTimeinSeconds()
+      });
+    }
+
+    socket.on('request_for_sync', function() {
+      sendSync();
+    });
+
+    socket.on('set_time_and_play', function(data) {
+      $scope.setTime(data.time);
+      $scope.play();
+    });
 
     socket.on('connect', function() {
       socket.emit('room', {'room_name': $scope.channelName});
+      socket.emit('request_for_sync', {'room_name': $scope.channelName});
+      sendSync();
     });
 
     socket.on('player_changed', function(data) {
@@ -24,7 +38,7 @@ angular.module(app_name)
       if ($scope.rec_message === 1) {
         $scope.play();
       }
-      if ($scope.rec_message === 2) {
+      else if ($scope.rec_message === 2) {
         $scope.pause();
       }
     });

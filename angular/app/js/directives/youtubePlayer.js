@@ -26,6 +26,13 @@ app.directive('youtubePlayer', ['$window', 'socket', function ($window, socket) 
         scope.player.pauseVideo();
       };
 
+      $scope.getTimeinSeconds = function() {
+        return scope.player.getCurrentTime();
+      };
+
+      $scope.setTime = function(time) {
+        scope.player.seekTo(time, false);
+      };
 
       if (!YT) {
         $window.onYouTubePlayerAPIReady = onPlayerReady;
