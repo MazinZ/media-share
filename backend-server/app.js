@@ -76,6 +76,10 @@ io.on('connection', (socket) => {
   - send setTime event then wait for all clients to response they are ready and have buffered a little ahead of time specified.
   - then after clients send ready event server sends back event telling them all to start.
 
+  [Alternative algorithm]
+  - Client constantly send time they are at while playing video every specified time interval.
+  - Server averages times together and if client is ever off by 2 or more seconds, server tells that client the average video time to set their player to.
+
   */
 
   socket.on('requestSync', (data) => {
