@@ -11,6 +11,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
 var passportSocketIo = require('passport.socketio');
+var _ = require('lodash');
 
 mongoose.connect('mongodb://localhost/backend-server');
 var db = mongoose.connection;
@@ -53,38 +54,76 @@ io.on('connection', (socket) => {
   socket.on('room', function (data) {
     console.log('client joined room: ' + data.room_name);
     socket.join(data.room_name);
+    sync_channel[data.room_name] = {
+        count: 0,
+        timestamps: []
+      };
   });
   socket.on('player_changed', function(data){
     console.log('player_changed on room: ' + data.room_name);
     io.to(data.room_name).emit('player_changed', data);
   });
+  
+  /*
+  Ideas behind Syncing.
+  - When a client joins they send a requestSync event, then a sync event with their timestamp in it.
+  - Server receives this event and broadcasts requestSync to all other clients.
+  - After clients recieve a requestSynce they emit a sync event to server with their timestamp in it.
+  - After server has receieved all syncs from each socket in a room, the server emits a setTimeAndPlay
+    event to the clients notifying them what time they should play the video at and to start immediately.
+
+  [Future improvements to algorithm]
+  - send setTime event then wait for all clients to response they are ready and have buffered a little ahead of time specified.
+  - then after clients send ready event server sends back event telling them all to start.
+
+  */
+
   socket.on('requestSync', (data) => {
-    socket.broadcast
+    socket.broadcast.emit('requestSync');
   });
 
   socket.on('sync', (data) => {
     console.log('sync event');
-    console.log('sync channel');
+    console.log('sync channel before');
     console.log(sync_channel);
     var room = data.room_name;
     var timestamp = data.timestamp;
-    if(room !in sync_channel){
-      sync_channel.room = {
+    if(!(room in sync_channel)){
+      sync_channel[room] = {
         count: 0,
         timestamps: []
       };
     }
-    sync_channel.room.count++;
-    sync_channel.room.timestamps.push(timestamp);
-    if(sync_count >= io.sockets.clients('room').length){
-      io.to(room).emit('setTimeAndPlay', {setTime: _.max(sync_channel.room.timestamps)});
-
+    sync_channel[room].count++;
+    sync_channel[room].timestamps.push(timestamp);
+    // console.log('sync channel2');
+    // console.log(sync_channel);
+    var cinroom = NumClientsInRoom('/', room);
+    console.log(cinroom);
+    console.log('sync channel after');
+    console.log(sync_channel);
+    if(sync_channel[room].count >= cinroom){
+      console.log('emitting setTimeAndPlay');
+      console.log({setTime: _.max(sync_channel[room].timestamps)});
+      io.to(room).emit('setTimeAndPlay', {setTime: _.max(sync_channel[room].timestamps)});
       //reset room
-      sync_channel.room.count = 0;
-      sync_channel.room.timestamps = [];
+      sync_channel[room].count = 0;
+      sync_channel[room].timestamps = [];
     }
   });
+  socket.on('disconnect', function () {
+    console.log('disconnect');
+    console.log(socket.rooms);
+    //   socket.rooms.forEach(function(room){
+    //      io.in(room).emit('user:disconnect', {id: socket.id});
+    //  });
+  });
 });
+
+function NumClientsInRoom(namespace, room) {
+  var clients = io.nsps[namespace].adapter.rooms[room];
+  return clients.length;
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
