@@ -6,17 +6,23 @@ angular.module(app_name)
 
     $scope.send = function(message) {
       socket.emit('player_changed', {
-        'room_name': $stateParams.name, 
+        'room_name': $scope.channelName, 
         'message': message
       });
     };
 
     socket.on('connect', function() {
-      socket.emit('room', {'room_name': $stateParams.name});
+      socket.emit('room', {'room_name': $scope.channelName});
     });
 
-    socket.on('played_changed', function(message) {
-      console.log(message);
+    socket.on('player_changed', function(data) {
+      $scope.rec_message = data.message[1];
+      if ($scope.rec_message === 1) {
+        $scope.play();
+      }
+      if ($scope.rec_message === 2) {
+        $scope.pause();
+      }
     });
 
 }]);

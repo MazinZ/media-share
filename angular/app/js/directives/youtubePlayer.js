@@ -7,7 +7,7 @@ app.directive('youtubePlayer', ['$window', 'socket', function ($window, socket) 
     link: function (scope, element) {
       scope.videoId = 'l6PwOlIMAFw';
       scope.message = ['unstarted', -1];
-
+  
       scope.events = {
         'unstarted': -1,
         'ended': 0,
@@ -15,6 +15,15 @@ app.directive('youtubePlayer', ['$window', 'socket', function ($window, socket) 
         'paused': 2,
         'buffering': 3,
         'video_cued': 5
+      };
+
+
+      scope.play = function() {
+        scope.player.playVideo();
+      };
+
+      scope.pause = function() {
+        scope.player.pauseVideo();
       };
 
 
@@ -29,7 +38,7 @@ app.directive('youtubePlayer', ['$window', 'socket', function ($window, socket) 
       }
 
       function onPlayerReady() {
-        var player = new YT.Player(element.attr('id'), {
+        scope.player = new YT.Player(element.attr('id'), {
           height: '390',
           width: '640',
           videoId: scope.videoId,
