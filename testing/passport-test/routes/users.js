@@ -33,7 +33,7 @@ router.get('/logout', function(req, res){
 
 router.get('/isloggedin', function(req, res){
     if(req.isAuthenticated()){
-        res.send("Yes")
+        res.send("Yes");
 	} else {
 		//req.flash('error_msg','You are not logged in');
 		res.send("No");
