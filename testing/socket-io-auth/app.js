@@ -24,18 +24,8 @@ var app = express();
 var server = http.Server(app);
 var io = socketio(server);
 
-// Express Session
-app.use(session({
-    key: 'express.sid',
-    store: sessionStore,
-    secret: 'secret',
-    saveUninitialized: true,
-    resave: true
-}));
-
-
 io.use(passportSocketIo.authorize({
-  key: 'express.sid',
+  key: 'connect.sid',
   secret: 'secret',
   passport: passport,
   store: sessionStore,
@@ -44,25 +34,26 @@ io.use(passportSocketIo.authorize({
   fail: onAuthorizeFail,
 }));
 
+// Express Session
+app.use(session({
+    key: 'connect.sid',
+    store: sessionStore,
+    secret: 'secret',
+    saveUninitialized: true,
+    resave: true
+}));
+
 // Passport init
 app.use(passport.initialize());
 app.use(passport.session());
 
 function onAuthorizeSuccess(data, accept){
-  console.log('SUCCESS');
-  console.log(accept);
   accept();
 };
 
-function onAuthorizeFail(data, accept){
-  console.log('FAIL');
-  // console.log(data);
-  console.log(accept);
+function onAuthorizeFail(data, msg, err, accept){
   accept();
 };
-
-
-
 
 io.on('connection', (socket) => {
   console.log('client connected');
@@ -77,7 +68,7 @@ io.on('connection', (socket) => {
 });
 
 // Logger 
-app.use(morgan('tiny'));
+// app.use(morgan('tiny'));
 
 // BodyParser Middleware
 app.use(bodyParser.json());
@@ -86,8 +77,6 @@ app.use(cookieParser());
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-
-
 
 passport.use(new LocalStrategy(
   function(username, password, done) {

@@ -1,6 +1,7 @@
 var express = require('express');
 var expressValidator = require('express-validator');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -9,9 +10,12 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
+var passportSocketIo = require('passport.socketio');
 
 mongoose.connect('mongodb://localhost/backend-server');
 var db = mongoose.connection;
+
+var sessionStore = new MongoStore({url:'mongodb://127.0.0.1/'});
 
 // var index = require('./routes/index');
 // var users = require('./routes/users');
@@ -24,6 +28,16 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server)
 
+io.use(passportSocketIo.authorize({
+  key: 'connect.sid',
+  secret: 'secret',
+  passport: passport,
+  store: sessionStore,
+  cookieParser: cookieParser,
+  success: onAuthorizeSuccess,
+  fail: onAuthorizeFail,
+}));
+
 io.on('connection', function (socket) {
   socket.on('room', function (room) {
     console.log('client joined room: ' + room);
@@ -31,6 +45,21 @@ io.on('connection', function (socket) {
   });
 });
 
+io.on('connection', (socket) => {
+  console.log('client connected');
+  socket.on('test-event', (data) => {
+    if (socket.request.user && socket.request.user.logged_in) {
+      console.log('authenticated event')
+      console.log(socket.request.user);
+    } else {
+      console.log('not authenticated event');
+    }
+  });
+  socket.on('room', function (room) {
+    console.log('client joined room: ' + room);
+    socket.join(room);
+  });
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,6 +73,8 @@ app.use(function(req, res, next){
 
 // Express Session
 app.use(session({
+    key: 'connect.sid',
+    store: sessionStore,
     secret: 'secret',
     saveUninitialized: true,
     resave: true
@@ -52,6 +83,14 @@ app.use(session({
 // Passport init
 app.use(passport.initialize());
 app.use(passport.session());
+
+function onAuthorizeSuccess(data, accept){
+  accept();
+};
+
+function onAuthorizeFail(data, msg, err, accept){
+  accept();
+};
 
 // Express Validator
 app.use(expressValidator({

@@ -6,6 +6,7 @@ angular.module(app_name)
 
     socket.on('connect', function() {
       socket.emit('room', $stateParams.name);
+      socket.emit('test-event', {butter: "corn"});
     });
 
     socket.on('message', function(data) {
