@@ -82,8 +82,8 @@ io.on('connection', (socket) => {
 
   */
 
-  socket.on('requestSync', (data) => {
-    socket.broadcast.emit('requestSync');
+  socket.on('request_for_sync', (data) => {
+    socket.broadcast.emit('request_for_sync');
   });
 
   socket.on('sync', (data) => {
@@ -109,7 +109,7 @@ io.on('connection', (socket) => {
     if(sync_channel[room].count >= cinroom){
       console.log('emitting setTimeAndPlay');
       console.log({setTime: _.max(sync_channel[room].timestamps)});
-      io.to(room).emit('setTimeAndPlay', {setTime: _.max(sync_channel[room].timestamps)});
+      io.to(room).emit('set_time_and_play', {setTime: _.max(sync_channel[room].timestamps)});
       //reset room
       sync_channel[room].count = 0;
       sync_channel[room].timestamps = [];
