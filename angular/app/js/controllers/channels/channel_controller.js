@@ -12,7 +12,7 @@ angular.module(app_name)
     };
 
     $scope.sendSync = function() {
-      socket.emit('sync', {'room_name': $scope.channelName}, '30');
+      socket.emit('sync', {'room_name': $scope.channelName, 'timestamp': 30});
     };
 
     socket.on('connect', function() {
