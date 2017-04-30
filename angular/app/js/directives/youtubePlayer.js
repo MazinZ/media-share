@@ -1,10 +1,12 @@
 // Ref: http://blog.oxrud.com/posts/creating-youtube-directive/
-app.directive('youtubePlayer', ['$window', function ($window) {
+app.directive('youtubePlayer', ['$window', 'socket', function ($window, socket) {
 
   return {
     restrict: 'A',
+    scope: '=',
     link: function (scope, element) {
       scope.videoId = 'l6PwOlIMAFw';
+      scope.message = ['unstarted', -1];
 
       scope.events = {
         'unstarted': -1,
@@ -38,9 +40,10 @@ app.directive('youtubePlayer', ['$window', function ($window) {
         }
 
       function onPlayerStateChange(event) {
-        console.log(_.filter(_.pairs(scope.events), function(type) {
+        scope.message = _.filter(_.pairs(scope.events), function(type) {
           return type[1] === event.data;
-        })[0]);
+        })[0];
+        scope.send(scope.message);
       }
 
     }

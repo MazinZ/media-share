@@ -4,13 +4,19 @@ angular.module(app_name)
 
     $scope.channelName = $stateParams.name;
 
+    $scope.send = function(message) {
+      socket.emit('player_changed', {
+        'room_name': $stateParams.name, 
+        'message': message
+      });
+    };
+
     socket.on('connect', function() {
-      socket.emit('room', $stateParams.name);
-      socket.emit('test-event', {butter: "corn"});
+      socket.emit('room', {'room_name': $stateParams.name});
     });
 
-    socket.on('message', function(data) {
-      console.log('Incoming message:', data);
+    socket.on('played_changed', function(message) {
+      console.log(message);
     });
 
 }]);
