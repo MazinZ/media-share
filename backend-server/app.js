@@ -38,6 +38,8 @@ io.use(passportSocketIo.authorize({
   fail: onAuthorizeFail,
 }));
 
+var sync_channel = {};
+
 io.on('connection', (socket) => {
   console.log('client connected');
   socket.on('test-event', (data) => {
@@ -55,6 +57,32 @@ io.on('connection', (socket) => {
   socket.on('player_changed', function(data){
     console.log('player_changed on room: ' + data.room_name);
     io.to(data.room_name).emit('player_changed', data);
+  });
+  socket.on('requestSync', (data) => {
+    socket.broadcast
+  });
+
+  socket.on('sync', (data) => {
+    console.log('sync event');
+    console.log('sync channel');
+    console.log(sync_channel);
+    var room = data.room_name;
+    var timestamp = data.timestamp;
+    if(room !in sync_channel){
+      sync_channel.room = {
+        count: 0,
+        timestamps: []
+      };
+    }
+    sync_channel.room.count++;
+    sync_channel.room.timestamps.push(timestamp);
+    if(sync_count >= io.sockets.clients('room').length){
+      io.to(room).emit('setTimeAndPlay', {setTime: _.max(sync_channel.room.timestamps)});
+
+      //reset room
+      sync_channel.room.count = 0;
+      sync_channel.room.timestamps = [];
+    }
   });
 });
 
