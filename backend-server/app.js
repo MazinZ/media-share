@@ -38,13 +38,6 @@ io.use(passportSocketIo.authorize({
   fail: onAuthorizeFail,
 }));
 
-io.on('connection', function (socket) {
-  socket.on('room', function (room) {
-    console.log('client joined room: ' + room);
-    socket.join(room);
-  });
-});
-
 io.on('connection', (socket) => {
   console.log('client connected');
   socket.on('test-event', (data) => {
@@ -55,9 +48,13 @@ io.on('connection', (socket) => {
       console.log('not authenticated event');
     }
   });
-  socket.on('room', function (room) {
-    console.log('client joined room: ' + room);
-    socket.join(room);
+  socket.on('room', function (data) {
+    console.log('client joined room: ' + data.room_name);
+    socket.join(data.room_name);
+  });
+  socket.on('player_changed', function(data){
+    console.log('player_changeds on room: ' + data.room_name);
+    socket.to(data.room_name).emit(data.message);
   });
 });
 
