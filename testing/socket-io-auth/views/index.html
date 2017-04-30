@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html ng-app="media-share">
+  <head>
+    <title>Home</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io('//localhost:8080');
+      socket.emit('test-event',{butter: "corn"});
+    </script>
+  </head>
+  <body>
+    Corn
+  </body>
+</html>
