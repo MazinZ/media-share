@@ -53,8 +53,8 @@ io.on('connection', (socket) => {
     socket.join(data.room_name);
   });
   socket.on('player_changed', function(data){
-    console.log('player_changeds on room: ' + data.room_name);
-    socket.to(data.room_name).emit(data.message);
+    console.log('player_changed on room: ' + data.room_name);
+    io.to(data.room_name).emit('player_changed', data);
   });
 });
 
