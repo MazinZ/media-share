@@ -23,15 +23,17 @@ app.directive('youtubePlayer', ['$window', 'socket', function ($window, socket) 
       };
 
       scope.pause = function() {
+        console.log(scope.player);
         scope.player.pauseVideo();
       };
 
-      $scope.getTimeinSeconds = function() {
-        return scope.player.getCurrentTime();
+      scope.getTimeinSeconds = function() {
+        //return scope.player.getCurrentTime();
+        return 30
       };
 
-      $scope.setTime = function(time) {
-        scope.player.seekTo(time, false);
+      scope.setTime = function(time) {
+        //scope.player.seekTo(time, false);
       };
 
       if (!YT) {
