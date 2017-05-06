@@ -99,14 +99,17 @@ io.on('connection', (socket) => {
     console.log(sync_channel);
     var room = data.room_name;
     var timestamp = data.timestamp;
+    var state = data.state;
     if(!(room in sync_channel)){
       sync_channel[room] = {
         count: 0,
-        timestamps: []
+        timestamps: [],
+        states: []
       };
     }
     sync_channel[room].count++;
     sync_channel[room].timestamps.push(timestamp);
+    sync_channel[room].timestamps.push(state);
     // console.log('sync channel2');
     // console.log(sync_channel);
     var cinroom = NumClientsInRoom('/', room);
@@ -115,14 +118,23 @@ io.on('connection', (socket) => {
     console.log(sync_channel);
     if(sync_channel[room].count >= cinroom){
       console.log('emitting setTimeAndPlay');
-      console.log({setTime: _.max(sync_channel[room].timestamps)});
+      var max_index = 0;
+      for(i=0; sync_channel[room].timestamps; i++){
+        if(sync_channel[room].timestamps[max_index] < sync_channel[room].timestamps[i]){
+          max_index = i;
+        }
+      }
+      // console.log({setTime: _.max(sync_channel[room].timestamps)});
+
       io.to(room).emit('set_time_and_play', {
-        time: _.max(sync_channel[room].timestamps),
-        state: rooms[room].state
+        // time: _.max(sync_channel[room].timestamps),
+        time: sync_channel[room].timestamps[max_index],
+        state: sync_channel[room].states[max_index]
       });
       //reset room
       sync_channel[room].count = 0;
       sync_channel[room].timestamps = [];
+      sync_channel[room].states = [];
     }
   });
 
