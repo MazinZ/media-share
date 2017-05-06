@@ -51,6 +51,7 @@ io.on('connection', (socket) => {
       console.log('not authenticated event');
     }
   });
+
   socket.on('room', function (data) {
     console.log('client joined room: ' + data.room_name);
     socket.join(data.room_name);
@@ -59,6 +60,7 @@ io.on('connection', (socket) => {
         timestamps: []
       };
   });
+  
   socket.on('player_changed', function(data){
     console.log('player_changed on room: ' + data.room_name);
     io.to(data.room_name).emit('player_changed', data);
@@ -79,15 +81,15 @@ io.on('connection', (socket) => {
   [Alternative algorithm]
   - Client constantly send time they are at while playing video every specified time interval.
   - Server averages times together and if client is ever off by 2 or more seconds, server tells that client the average video time to set their player to.
-
   */
 
   socket.on('request_for_sync', (data) => {
+    console.log("recieved request_for_sync")
     socket.broadcast.emit('request_for_sync');
   });
 
   socket.on('sync', (data) => {
-    console.log('sync event');
+    console.log("recieved sync")
     console.log('sync channel before');
     console.log(sync_channel);
     var room = data.room_name;
@@ -115,13 +117,15 @@ io.on('connection', (socket) => {
       sync_channel[room].timestamps = [];
     }
   });
+
   socket.on('disconnect', function () {
-    console.log('disconnect');
-    console.log(socket.rooms);
+    console.log('recieved disconnect');
+    // console.log(socket.rooms);
     //   socket.rooms.forEach(function(room){
     //      io.in(room).emit('user:disconnect', {id: socket.id});
     //  });
   });
+
 });
 
 function NumClientsInRoom(namespace, room) {
