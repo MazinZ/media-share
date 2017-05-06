@@ -39,6 +39,7 @@ io.use(passportSocketIo.authorize({
   fail: onAuthorizeFail,
 }));
 
+var rooms = {};
 var sync_channel = {};
 
 io.on('connection', (socket) => {
@@ -55,6 +56,9 @@ io.on('connection', (socket) => {
   socket.on('room', function (data) {
     console.log('client joined room: ' + data.room_name);
     socket.join(data.room_name);
+    rooms[data.room_name] = {
+      state: 0
+    };
     sync_channel[data.room_name] = {
         count: 0,
         timestamps: []
@@ -63,6 +67,7 @@ io.on('connection', (socket) => {
   
   socket.on('player_changed', function(data){
     console.log('player_changed on room: ' + data.room_name);
+    rooms[data.room_name].state = data.message;
     socket.to(data.room_name).emit('player_changed', data);
   });
   
