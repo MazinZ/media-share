@@ -116,7 +116,10 @@ io.on('connection', (socket) => {
     if(sync_channel[room].count >= cinroom){
       console.log('emitting setTimeAndPlay');
       console.log({setTime: _.max(sync_channel[room].timestamps)});
-      io.to(room).emit('set_time_and_play', {setTime: _.max(sync_channel[room].timestamps)});
+      io.to(room).emit('set_time_and_play', {
+        time: _.max(sync_channel[room].timestamps),
+        state: rooms[room].state
+      });
       //reset room
       sync_channel[room].count = 0;
       sync_channel[room].timestamps = [];
