@@ -3,5 +3,8 @@
   <h3> {{channelName}} </h3>
 
         <div id="player" youtube-player></div>
+        <button ng-click="sendPlayEvent()"> Play </button>
+        <button ng-click="sendPauseEvent()"> Pause </button>
+
         <button ng-click="sendSync()"> Send sync </button>
 </div>

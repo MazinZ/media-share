@@ -3,6 +3,16 @@ angular.module(app_name)
   function($scope, $stateParams, $timeout, channel_service, socket){
 
     $scope.channelName = $stateParams.name;
+    $scope.ready = false;
+
+    $scope.$watch('ready', function(newVal, oldVal){
+      console.log(newVal)
+      if (newVal) {
+        socket.emit('room', {'room_name': $scope.channelName});
+        socket.emit('request_for_sync', {'room_name': $scope.channelName});
+        sendSync();
+      }
+    });
 
     $scope.send = function(message) {
       socket.emit('player_changed', {
@@ -12,6 +22,9 @@ angular.module(app_name)
     };
 
     function sendSync() {
+      if (!$scope.getTimeinSeconds) {
+        return;
+      }
       socket.emit('sync', {
         'room_name': $scope.channelName,
         'timestamp': $scope.getTimeinSeconds()
@@ -23,24 +36,33 @@ angular.module(app_name)
     });
 
     socket.on('set_time_and_play', function(data) {
-      $scope.setTime(data.time);
-      $scope.play();
+      $scope.stop();
+      $scope.setTime(data.setTime);
+      /*$timeout(function(){
+        $scope.play();
+        console.log("PRE");
+      }, 3000);
+      console.log("POST");*/
     });
 
-    socket.on('connect', function() {
+    /*socket.on('connect', function() {
       socket.emit('room', {'room_name': $scope.channelName});
       socket.emit('request_for_sync', {'room_name': $scope.channelName});
       sendSync();
-    });
+    });*/
 
     socket.on('player_changed', function(data) {
-      $scope.rec_message = data.message[1];
+      console.log("DATA", data);
+      $scope.rec_message = data.message;
+      console.log("NEWMESSAGE", $scope.rec_message);
       if ($scope.rec_message === 1) {
         $scope.play();
       }
       else if ($scope.rec_message === 2) {
         $scope.pause();
       }
+      else if ($scope.rec_message === 3) {
+        console.log("Buffering...");
+      }
     });
-
 }]);

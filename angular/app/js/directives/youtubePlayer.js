@@ -16,24 +16,30 @@ app.directive('youtubePlayer', ['$window', 'socket', function ($window, socket) 
         'buffering': 3,
         'video_cued': 5
       };
-
-
+      scope.sendPlayEvent = function() {
+        scope.send(scope.events['playing']);
+      }
       scope.play = function() {
-        scope.player.playVideo();
+        scope.send(scope.events['paused']);
       };
 
-      scope.pause = function() {
-        console.log(scope.player);
+      scope.sendPauseEvent = function() {
         scope.player.pauseVideo();
       };
 
+      scope.stop = function() {
+        scope.player.stopVideo();
+      };
+
       scope.getTimeinSeconds = function() {
-        //return scope.player.getCurrentTime();
-        return 30
+        console.log(scope.player);
+        console.log(scope.player.getCurrentTime);
+        return scope.player.getCurrentTime();
       };
 
       scope.setTime = function(time) {
-        //scope.player.seekTo(time, false);
+        console.log("TIME", time);
+        scope.player.seekTo(time, false);
       };
 
       if (!YT) {
@@ -47,21 +53,28 @@ app.directive('youtubePlayer', ['$window', 'socket', function ($window, socket) 
       }
 
       function onPlayerReady() {
-        scope.player = new YT.Player(element.attr('id'), {
-          height: '390',
-          width: '640',
-          videoId: scope.videoId,
-          events: {
-            'onStateChange': onPlayerStateChange
-          }
+          scope.player = new YT.Player(element.attr('id'), {
+            height: '390',
+            width: '640',
+            videoId: scope.videoId,
+            events: {
+              'onReady': onReady,
+              'onStateChange': onPlayerStateChange
+            }
           });
         }
 
+      function onReady(event) {  
+        scope.$apply(function() {
+          scope.ready = true;
+        });
+      }
+
       function onPlayerStateChange(event) {
-        scope.message = _.filter(_.pairs(scope.events), function(type) {
+        /*scope.message = _.filter(_.pairs(scope.events), function(type) {
           return type[1] === event.data;
         })[0];
-        scope.send(scope.message);
+        scope.send(scope.message);*/
       }
 
     }
