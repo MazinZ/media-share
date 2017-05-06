@@ -63,7 +63,7 @@ io.on('connection', (socket) => {
   
   socket.on('player_changed', function(data){
     console.log('player_changed on room: ' + data.room_name);
-    io.to(data.room_name).emit('player_changed', data);
+    socket.to(data.room_name).emit('player_changed', data);
   });
   
   /*
